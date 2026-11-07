@@ -1,0 +1,18 @@
+[package]
+# The repository is 6502-rust; Cargo does not allow a package name that starts
+# with a digit, so the crate takes the reference's import name.
+name = "sixfiveohtwo"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.85"
+description = "A Rust NMOS 6502 core transcribed from, and proven equivalent to, 6502-python"
+license = "MIT"
+repository = "https://github.com/alewman/6502-rust"
+publish = false
+
+[dependencies]
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+[profile.release]
+debug = 1

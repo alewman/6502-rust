@@ -1,0 +1,1 @@
+{"memory":[{"address":512,"hex":"e8e802e8"},{"address":65532,"hex":"0002"}],"reset":true,"steps":40,"events":[{"step":20,"action":"reset"},{"step":25,"action":"nmi"}]}

@@ -1,0 +1,54 @@
+name: CI
+
+# Kept small: main and pull requests, superseded runs cancelled. The full
+# SingleStepTests corpus (rung 2) and the seeded faults run by hand (README).
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+    name: fmt, clippy, test (rung 5)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+      - run: cargo fmt --check
+      - run: cargo clippy --release --all-targets -- -D warnings
+      - run: cargo test --release
+
+  rungs:
+    name: rungs 1-4 against 6502-python
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "pypy3.11"
+      - name: cc65 (assembles Dormann's decimal test)
+        run: sudo apt-get install -y -q cc65
+      - name: the reference at its pin, its vectors and Dormann's tests
+        run: |
+          PYTHON=python scripts/fetch_6502python.sh
+          external/6502-python/.venv/bin/python external/6502-python/scripts/fetch_test_vectors.py
+          external/6502-python/.venv/bin/python external/6502-python/scripts/fetch_dormann_tests.py
+      - name: "rung 2: SingleStepTests, 100 cases an opcode, both sets"
+        run: LIMIT=100 scripts/rung2.sh
+      - name: "rung 3: Dormann natively"
+        run: scripts/rung3.sh
+      - name: "rung 1: Dormann in lockstep"
+        run: scripts/rung1.sh
+      - name: "rung 4: interrupts, resets, JAM, DMA stalls in lockstep"
+        run: scripts/rung4.sh
