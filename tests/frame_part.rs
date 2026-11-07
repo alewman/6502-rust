@@ -8,6 +8,9 @@
 
 use sixfiveohtwo::frame::{Frame, Part, I, IRQ_LINE, NMI_LATCH, NO_POLL};
 
+/// A test's event: the access it runs during, and what it does to the frame.
+type Event = (u64, fn(&mut Frame));
+
 /// What the toy did at each step, and when the test's events fire.
 struct Toy {
     frame: Frame,
@@ -15,7 +18,7 @@ struct Toy {
     /// Cycles each instruction takes, all bus reads.
     length: u32,
     /// The access (counted from 0) during which `event` runs.
-    event_at: Option<(u64, fn(&mut Frame))>,
+    event_at: Option<Event>,
     accesses: u64,
     log: Vec<&'static str>,
     halt_after: Option<u32>,
