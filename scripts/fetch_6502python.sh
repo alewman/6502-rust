@@ -4,7 +4,8 @@
 #   SOURCE: a git URL or a local clone (default: GitHub). PYTHON picks the
 #   interpreter for the venv (PyPy runs the long rungs several times faster).
 set -euo pipefail
-COMMIT=741419a33d1de400a63f7c24c7916bb600694ca2
+# 828b619 = 741419a after 6502-python's history rewrite of 2026-11-21 (same tree).
+COMMIT=828b61940415eed39678fa1f7d310608201e54ef
 ROOT=$(cd "$(dirname "$0")/.." && pwd)
 DEST=${1:-"$ROOT/external/6502-python"}
 SOURCE=${2:-https://github.com/alewman/6502-python}
